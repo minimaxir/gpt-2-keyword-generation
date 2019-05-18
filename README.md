@@ -19,12 +19,14 @@ This repo contains a script which attempts to extract the keywords in an unsuper
 ## Advanced Usage
 
 This script is also capable of handling additional hierarchal conditions. This script has 4 total possibilities implemented:
-`category`, `keywords`, `title`, and `body`. In this case
+`category`, `keywords`, `title`, and `body`. In this case, 
 
 ## Helpful Notes
 
 * The scope of the text document plus the keywords must be within gpt-2's max scope (e.g. should only be a paragraph or two max).
-* Manual tagging may work better, and that is an option.
+* Manual tagging may work better, and that is an option that can be passed.
+* There should be an equal amount of all `category` documents to prevent sampling bias.
+* The delimeters are chosen to be single, uncommon ASCII characters that are relatively unlikely to be used anywhere else, such that the network explicitly learns the significance of those characters. (see [Wired](https://www.wired.com/2013/08/the-rarity-of-the-ampersand/) and [Stack Overflow](https://stackoverflow.com/questions/492090/least-used-delimiter-character-in-normal-text-ascii-128) on the character rarity)
 
 ## Maintainer/Creator
 
