@@ -58,6 +58,8 @@ def encode_keywords(csv_path, model='en_core_web_sm',
                     keywords = [re.sub(pattern, '-', keyword.lower().strip())
                                 for keyword in row[keyword_gen].split(keyword_sep)]
 
+                keywords = set(keywords)   # dedupe
+
                 for _ in repeat:
                     new_keywords = [keyword for keyword in keywords
                                     if random < dropout]
@@ -66,7 +68,7 @@ def encode_keywords(csv_path, model='en_core_web_sm',
 
                     w.write(start_token +
                             build_section('category', category) +
-                            build_section('keywords', keywords) +
+                            build_section('keywords', new_keywords) +
                             build_section('title', title) +
                             build_section('body', body) +
                             end_token + "\n")
