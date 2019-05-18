@@ -5,6 +5,7 @@ from random import random, shuffle
 
 
 delims = {
+    'section': '~',
     'category': '`',
     'keywords': '^',
     'title': '@',
@@ -12,12 +13,12 @@ delims = {
 }
 
 
-def build_section(section_delim, section, text):
+def build_section(section, text):
     if text is None:
         return ''
     if section == 'keywords':
         text = " ".join(text)
-    return section_delim + delims[section] + text
+    return delims['section'] + delims[section] + text
 
 
 def encode_keywords(csv_path, model='en_core_web_sm',
@@ -27,7 +28,6 @@ def encode_keywords(csv_path, model='en_core_web_sm',
                     body_field=None,
                     keyword_gen='title',
                     keyword_sep=',',
-                    section_delim='~',
                     dropout=0.5,
                     repeat=3,
                     max_keywords=3,
@@ -65,8 +65,8 @@ def encode_keywords(csv_path, model='en_core_web_sm',
                     new_keywords = new_keywords[:max_keywords]
 
                     w.write(start_token +
-                            build_section(section_delim, 'category', category) +
-                            build_section(section_delim, 'keywords', keywords) +
-                            build_section(section_delim, 'title', title) +
-                            build_section(section_delim, 'body', body) +
+                            build_section('category', category) +
+                            build_section('keywords', keywords) +
+                            build_section('title', title) +
+                            build_section('body', body) +
                             end_token + "\n")
