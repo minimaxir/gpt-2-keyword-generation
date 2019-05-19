@@ -60,9 +60,9 @@ def encode_keywords(csv_path, model='en_core_web_sm',
 
                 keywords = set(keywords)   # dedupe
 
-                for _ in repeat:
+                for _ in range(repeat):
                     new_keywords = [keyword for keyword in keywords
-                                    if random < dropout]
+                                    if random() < dropout]
                     shuffle(new_keywords)
                     new_keywords = new_keywords[:max_keywords]
 
