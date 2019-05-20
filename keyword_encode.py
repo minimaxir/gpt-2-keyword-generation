@@ -13,7 +13,8 @@ DELIMS = {
     'body': '}'
 }
 
-PRONOUNS = set(['i', 'we', 'you', 'he', 'she', 'it', 'him', 'her', 'them', 'they'])
+PRONOUNS = set(['i', 'me', 'we', 'you', 'he', 'she',
+                'it', 'him', 'her', 'them', 'they'])
 
 
 def build_section(section, text):
@@ -32,6 +33,7 @@ def encode_keywords(csv_path, model='en_core_web_sm',
                     dropout=0.5,
                     repeat=3,
                     max_keywords=3,
+                    keyword_length_max=20,
                     out_path='csv_encoded.txt',
                     start_token="<|startoftext|>",
                     end_token="<|endoftext|>"):
@@ -56,7 +58,8 @@ def encode_keywords(csv_path, model='en_core_web_sm',
                     keywords = [[chunk.text, chunk.root.text]
                                 for chunk in doc.noun_chunks]
                     keywords = [re.sub(pattern, '-', text.lower())
-                                for text in chain.from_iterable(keywords)]
+                                for text in chain.from_iterable(keywords)
+                                if len(text) <= keyword_length_max]
                 else:
                     keywords = [re.sub(pattern, '-', keyword.lower().strip())
                                 for keyword in row[keyword_gen].split(keyword_sep)]
