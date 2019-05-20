@@ -19,8 +19,6 @@ PRONOUNS = set(['i', 'we', 'you', 'he', 'she', 'it', 'him', 'her', 'them', 'they
 def build_section(section, text):
     if text is None:
         return ''
-    if section == 'keywords':
-        text = " ".join(text)
     return DELIMS['section'] + DELIMS[section] + text
 
 
@@ -69,7 +67,7 @@ def encode_keywords(csv_path, model='en_core_web_sm',
                     new_keywords = [keyword for keyword in keywords
                                     if random() < dropout]
                     shuffle(new_keywords)
-                    new_keywords = new_keywords[:max_keywords]
+                    new_keywords = " ".join(new_keywords[:max_keywords])
 
                     w.write(start_token +
                             build_section('category', category) +
