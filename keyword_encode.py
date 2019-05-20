@@ -1,10 +1,11 @@
 import spacy
 import csv
 import re
+from itertools import chain
 from random import random, shuffle
 
 
-delims = {
+DELIMS = {
     'section': '~',
     'category': '`',
     'keywords': '^',
@@ -12,13 +13,15 @@ delims = {
     'body': '}'
 }
 
+PRONOUNS = set(['i', 'we', 'you', 'he', 'she', 'it', 'him', 'her', 'them', 'they'])
+
 
 def build_section(section, text):
     if text is None:
         return ''
     if section == 'keywords':
         text = " ".join(text)
-    return delims['section'] + delims[section] + text
+    return DELIMS['section'] + DELIMS[section] + text
 
 
 def encode_keywords(csv_path, model='en_core_web_sm',
@@ -52,13 +55,15 @@ def encode_keywords(csv_path, model='en_core_web_sm',
                 if keywords_field is None:
                     # Generate the keywords using spacy
                     doc = nlp(row[keyword_gen])
-                    keywords = [re.sub(pattern, '-', chunk.text.lower())
+                    keywords = [[chunk.text, chunk.root.text]
                                 for chunk in doc.noun_chunks]
+                    keywords = [re.sub(pattern, '-', text.lower())
+                                for text in chain.from_iterable(keywords)]
                 else:
                     keywords = [re.sub(pattern, '-', keyword.lower().strip())
                                 for keyword in row[keyword_gen].split(keyword_sep)]
 
-                keywords = set(keywords)   # dedupe
+                keywords = set(keywords) - PRONOUNS   # dedupe + remove pronouns
 
                 for _ in range(repeat):
                     new_keywords = [keyword for keyword in keywords
