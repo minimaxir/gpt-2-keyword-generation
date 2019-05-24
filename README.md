@@ -16,10 +16,16 @@ This repo contains a script which attempts to extract the keywords in an unsuper
 	* The max number of keywords is capped at `max_keywords` (default: 3) to prevent overfitting, but in combination with `dropout` and `repeat`, still gives more keyword group possibilities than just 3 from a document to be present.
 3. Write the keywords, then the document for each generated set of keywords.
 
+The default case (passing a CSV of `titles`) generates `keywords`, and outputs a `.txt` of keywords and titles.
+
 ## Advanced Usage
 
 This script is also capable of handling additional hierarchal conditions. This script has 4 total possibilities implemented:
-`category`, `keywords`, `title`, and `body`. In this case, 
+`category`, `keywords`, `title`, and `body`.
+
+`category` is the broadest scope of a given text. (e.g. the subreddit of a given post, the speaker of a given phrase if using for chatbots)
+
+`body` is used if there's a large amount of text dependant on `title` (e.g. a blog post).
 
 ## Helpful Notes
 
