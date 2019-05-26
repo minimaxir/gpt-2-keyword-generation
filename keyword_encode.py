@@ -1,6 +1,7 @@
 import spacy
 import csv
 import re
+from tqdm import tqdm
 from itertools import chain
 from random import random, shuffle
 
@@ -41,10 +42,17 @@ def encode_keywords(csv_path, model='en_core_web_sm',
     nlp = spacy.load(model)
     pattern = re.compile('\W+')
 
+    # Count the number of rows to set up progress bar
+    # Adapted from https://stackoverflow.com/a/19001475
+
+    with open(csv_path, 'r', encoding='utf8', errors='ignore') as f:
+        reader = csv.DictReader(f)
+        num_rows = sum(1 for _ in reader)
+
     with open(csv_path, 'r', encoding='utf8', errors='ignore') as f:
         with open(out_path, 'w', encoding='utf8', errors='ignore') as w:
             reader = csv.DictReader(f)
-            for row in reader:
+            for row in tqdm(reader, total=num_rows):
 
                 # category should be normalized to account for user input
                 category = re.sub(pattern, '-', row[category_field].lower().strip()) if category_field is not None else None
