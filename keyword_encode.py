@@ -48,21 +48,21 @@ def encode_keywords(csv_path, model='en_core_web_sm',
     def chunker(seq, size):
         return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
-    num_threads = multiprocessing.cpu_count()
+    num_threads = multiprocessing.cpu_count() * 2   # colocate 2 processes per thread
     encoders = [Encoder.remote(model, category_field,
-                 keywords_field,
-                 title_field,
-                 body_field,
-                 keyword_gen,
-                 keyword_sep,
-                 dropout,
-                 repeat,
-                 max_keywords,
-                 keyword_length_max,
-                 start_token,
-                 end_token,
-                 DELIMS,
-                 PRONOUNS) for _ in range(num_threads)]
+                               keywords_field,
+                               title_field,
+                               body_field,
+                               keyword_gen,
+                               keyword_sep,
+                               dropout,
+                               repeat,
+                               max_keywords,
+                               keyword_length_max,
+                               start_token,
+                               end_token,
+                               DELIMS,
+                               PRONOUNS) for _ in range(num_threads)]
 
     with open(out_path, 'w', encoding='utf8', errors='ignore') as w:
         pbar = tqdm(total=len(data_list), smoothing=0)
@@ -78,9 +78,9 @@ def encode_keywords(csv_path, model='en_core_web_sm',
 
             pbar.update(num_threads)
         pbar.close()
-    
 
-@ray.remote
+
+@ray.remote(num_cpus=0.5)
 class Encoder(object):
     def __init__(self, model, category_field,
                  keywords_field,
@@ -107,7 +107,7 @@ class Encoder(object):
         self.keyword_sep = keyword_sep
         self.dropout = dropout
         self.repeat = repeat
-        self.max_keywords =  max_keywords
+        self.max_keywords = max_keywords
         self.keyword_length_max = keyword_length_max
         self.start_token = start_token
         self.end_token = end_token
@@ -153,9 +153,9 @@ class Encoder(object):
             new_keywords = " ".join(new_keywords[:self.max_keywords])
 
             encoded_texts.append(self.start_token +
-                                self.build_section('category', category) +
-                                self.build_section('keywords', new_keywords) +
-                                self.build_section('title', title) +
-                                self.build_section('body', body) +
-                                self.end_token + "\n")
+                                 self.build_section('category', category) +
+                                 self.build_section('keywords', new_keywords) +
+                                 self.build_section('title', title) +
+                                 self.build_section('body', body) +
+                                 self.end_token + "\n")
         return encoded_texts
