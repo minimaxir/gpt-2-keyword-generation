@@ -1,7 +1,7 @@
 import spacy
 import csv
 import re
-import multiprocessing
+import pathos.multiprocessing
 from functools import partial
 from tqdm import tqdm
 from itertools import chain
@@ -67,7 +67,7 @@ def encode_keywords(csv_path, model='en_core_web_sm',
 
     shuffle(data_list)
     
-    with multiprocessing.Pool(multiprocessing.cpu_count()) as p:
+    with pathos.multiprocessing.Pool(pathos.multiprocessing.cpu_count()) as p:
         with open(out_path, 'w', encoding='utf8', errors='ignore') as w:
             pbar = tqdm(total=len(data_list), smoothing=0)
             for result in p.imap_unordered(func, data_list):
