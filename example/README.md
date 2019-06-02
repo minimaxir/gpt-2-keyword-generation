@@ -6,12 +6,16 @@ The input is the `title` of the Reddit post and the `subreddit` of the Reddit po
 
 ```python
 from keyword_encode import encode_keywords
+import ray
+
+ray.init(object_store_memory=10 * 1000000,
+         redis_max_memory=10 * 1000000)
 
 encode_keywords(csv_path='example/top_reddit_posts.csv',
                 out_path='example/top_reddit_posts_encoded.txt',
                 category_field='subreddit',
                 title_field='title',
-                keyword_gen='title')
+                keyword_gen='title')        
 ```
 
 ## Reddit BigQuery
