@@ -6,7 +6,7 @@ import multiprocessing
 from functools import partial
 from tqdm import tqdm
 from itertools import chain
-from random import random, shuffle
+from random import random, shuffle, randint
 
 DELIMS = {
     'section': '~',
@@ -16,8 +16,10 @@ DELIMS = {
     'body': '}'
 }
 
-PRONOUNS = set(['i', 'me', 'we', 'you', 'he', 'she',
-                'it', 'him', 'her', 'them', 'they'])
+PRONOUN_LIST = ['I', 'Me', 'We', 'You', 'He', 'She',
+                'It', 'Him', 'Her', 'Them', 'They']
+
+PRONOUNS = set(PRONOUN_LIST + [x.lower() for x in PRONOUN_LIST])
 
 
 def encode_keywords(csv_path, model='en_core_web_sm',
@@ -48,14 +50,14 @@ def encode_keywords(csv_path, model='en_core_web_sm',
     def chunker(seq, size):
         return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
-    num_threads = multiprocessing.cpu_count() * 2   # colocate 2 processes per thread
+    num_threads = multiprocessing.cpu_count() * 2  # colocate 2 processes per thread
+    print("Starting up {} Workers".format(num_threads))
     encoders = [Encoder.remote(model, category_field,
                                keywords_field,
                                title_field,
                                body_field,
                                keyword_gen,
                                keyword_sep,
-                               dropout,
                                repeat,
                                max_keywords,
                                keyword_length_max,
@@ -88,7 +90,6 @@ class Encoder(object):
                  body_field,
                  keyword_gen,
                  keyword_sep,
-                 dropout,
                  repeat,
                  max_keywords,
                  keyword_length_max,
@@ -105,7 +106,6 @@ class Encoder(object):
         self.body_field = body_field
         self.keyword_gen = keyword_gen
         self.keyword_sep = keyword_sep
-        self.dropout = dropout
         self.repeat = repeat
         self.max_keywords = max_keywords
         self.keyword_length_max = keyword_length_max
@@ -133,24 +133,38 @@ class Encoder(object):
 
         if self.keywords_field is None:
             # Generate the keywords using spacy
-            doc = self.nlp(row[self.keyword_gen])
-            keywords = [[chunk.text, chunk.root.text]
-                        for chunk in doc.noun_chunks]
-            keywords = [re.sub(self.pattern, '-', text.lower())
-                        for text in chain.from_iterable(keywords)
-                        if len(text) <= self.keyword_length_max]
-        else:
-            keywords = [re.sub(self.pattern, '-', keyword.lower().strip())
-                        for keyword in row[self.keyword_gen].split(self.keyword_sep)]
+            doc = nlp(row[self.keyword_gen])
+            keywords_nouns = [chunk.text
+                              for chunk in doc
+                              if chunk.pos_ == 'NOUN' and
+                              not chunk.is_stop
+                              ]
+            keywords_mod = [chunk.lemma_
+                            for chunk in doc
+                            if chunk.pos_ in ['VERB', 'ADJ', 'ADV'] and
+                            not chunk.is_stop
+                            ]
+            keywords_ents = [chunk.text
+                             for chunk in doc.ents]
+            keywords_compounds = [re.sub(' ', '-', chunk.text)
+                                  for chunk in doc.noun_chunks
+                                  if len(chunk.text) < self.keyword_length_max]
 
-        keywords = set(keywords) - self.PRONOUNS   # dedupe + remove pronouns
+            keywords = list(set(keywords_nouns +
+                                keywords_mod +
+                                keywords_ents +
+                                keywords_compounds) - self.PRONOUNS)  # dedupe
+        else:
+            keywords = [keyword.strip()
+                        for keyword in row[self.keyword_gen].split(self.keyword_sep)]
+            keywords = list(set(keywords))
 
         encoded_texts = []
         for _ in range(self.repeat):
-            new_keywords = [keyword for keyword in keywords
-                            if random() < self.dropout]
+            new_keywords = keywords
             shuffle(new_keywords)
-            new_keywords = " ".join(new_keywords[:self.max_keywords])
+            new_keywords = " ".join(
+                new_keywords[:randint(0, self.max_keywords)])
 
             encoded_texts.append(self.start_token +
                                  self.build_section('category', category) +
