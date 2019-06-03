@@ -134,15 +134,11 @@ class Encoder(object):
         if self.keywords_field is None:
             # Generate the keywords using spacy
             doc = nlp(row[self.keyword_gen])
-            keywords_nouns = [chunk.text
-                              for chunk in doc
-                              if chunk.pos_ == 'NOUN' and
-                              not chunk.is_stop
-                              ]
-            keywords_mod = [chunk.lemma_
+            keywords_pos = [chunk.text if chunk.pos_ == 'NOUN'
+                            else chunk.lemma_ if chunk.pos_ in ['VERB', 'ADJ', 'ADV']
+                            else 'I'
                             for chunk in doc
-                            if chunk.pos_ in ['VERB', 'ADJ', 'ADV'] and
-                            not chunk.is_stop
+                            if not chunk.is_stop
                             ]
             keywords_ents = [chunk.text
                              for chunk in doc.ents]
@@ -150,8 +146,7 @@ class Encoder(object):
                                   for chunk in doc.noun_chunks
                                   if len(chunk.text) < self.keyword_length_max]
 
-            keywords = list(set(keywords_nouns +
-                                keywords_mod +
+            keywords = list(set(keywords_pos +
                                 keywords_ents +
                                 keywords_compounds) - self.PRONOUNS)  # dedupe
         else:
