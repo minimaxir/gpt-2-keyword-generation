@@ -143,7 +143,7 @@ class Encoder(object):
                             for chunk in doc
                             if not chunk.is_stop
                             ]
-            keywords_ents = [chunk.text
+            keywords_ents = [re.sub(' ', '-', chunk.text)
                              for chunk in doc.ents]
             keywords_compounds = [re.sub(' ', '-', chunk.text)
                                   for chunk in doc.noun_chunks
