@@ -133,7 +133,10 @@ class Encoder(object):
 
         if self.keywords_field is None:
             # Generate the keywords using spacy
-            doc = nlp(row[self.keyword_gen])
+            # replace smart quotes first for better tokenization
+            text = re.sub(u'[\u2018\u2019]', "'",
+                          (re.sub(u'[\u201c\u201d]', '"', row[self.keyword_gen])))
+            doc = nlp(text)
             keywords_pos = [chunk.text if chunk.pos_ == 'NOUN'
                             else chunk.lemma_ if chunk.pos_ in ['VERB', 'ADJ', 'ADV']
                             else 'I'
