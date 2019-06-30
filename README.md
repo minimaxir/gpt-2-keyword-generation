@@ -1,10 +1,12 @@
 # gpt-2-keyword-generation
 
+![](example/example_pic.png)
+
 A method for encoding a dataset of text documents into a form that when finetuned with GPT-2, the network will be able to generate text pertaining to the specified keywords (although the encoded text can theoetically work with any type of text-based network, it leverages GPT-2's long horizon and strong context abilities).
 
 You can demo the results w/ an example on how to use the script in the `examples` folder. Additionally, you can play with keywords yourself with the [Reddit GPT-2 API](https://minimaxir.com/apps/gpt2-reddit/), or read [pregenerated examples](https://www.reddit.com/r/legaladviceofftopic/comments/bxi869/i_trained_an_ai_to_generate_the_ultimate/) of that keyword-based model on /r/legaladvice.
 
-The encoding is parallelized using ray in order to massively speed up encoding on large datasets (about 11x speedup using 32 vCPUs/threads vs. single threaded, at 70% CPU utilization)
+The encoding is tokenized using [spaCy](https://spacy.io) for more robust keyword tokenization and parallelized using [ray](https://github.com/ray-project/ray) in order to massively speed up encoding on large datasets (about 11x speedup using 32 vCPUs/threads vs. single threaded, at 70% CPU utilization)
 
 ## Simple Usage
 

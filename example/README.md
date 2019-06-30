@@ -2,6 +2,12 @@
 
 Here is an example using Reddit data, utilizing the Top 10 most-upvoted posts for the Top 100 Subreddits in February 2019 in `top_reddit_posts.csv`. *(CW: Sexual Language)*
 
+First, install the dependencies + the pretrained spaCy model:
+
+```shell
+pip3 install requirements.txt
+```
+
 The input is the `title` of the Reddit post and the `subreddit` of the Reddit post as the category.
 
 ```python
