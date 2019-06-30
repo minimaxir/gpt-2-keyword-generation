@@ -1,6 +1,6 @@
 # Keyword Generation Example
 
-Here is an example using Reddit data, utilizing the Top 10 posts for the Top 100 Subreddits in `top_reddit_posts.csv`. **(CW: Sexual Language)**
+Here is an example using Reddit data, utilizing the Top 10 most-upvoted posts for the Top 100 Subreddits in February 2019 in `top_reddit_posts.csv`. *(CW: Sexual Language)*
 
 The input is the `title` of the Reddit post and the `subreddit` of the Reddit post as the category.
 
@@ -18,7 +18,33 @@ encode_keywords(csv_path='example/top_reddit_posts.csv',
                 keyword_gen='title')        
 ```
 
+If you are generating texts (e.g. with gpt-2-simple), you'll need to manually reformat the text for it to serve as a prefix. The /r/legaladvice example was made using the command on a GPU:
+
+```shell
+gpt_2_simple generate --temperature 0.7 --top_k 40 --nsamples 100 --batch_size 25 --length 200 --prefix "<|startoftext|>~\`legaladvice~^dog cat tree sue~@" --truncate "<|endoftext|>" --include_prefix False --nfiles 1 --sample_delim ''
+```
+
+Or if using the Python interface to gpt-2-simple:
+
+```python
+gpt2.generate(sess,
+              temperature=0.7,
+              top_k=40,
+              nsamples=100,
+              batch_size=25,
+              length=200,
+              prefix="<|startoftext|>~`legaladvice~^dog cat tree sue~@"
+              truncate="<|endoftext|>",
+              include_prefix=False,
+              sample_delim=''
+              )
+```
+
+NB: if using the CLI, you'll have to escape the backquote as above. For keywords with spaces, delimit them with a `-`.
+
 ## Reddit BigQuery
+
+This BigQuery reproduces `top_reddit_posts.csv`.
 
 ```sql
 #standardSQL
