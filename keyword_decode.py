@@ -10,6 +10,10 @@ DELIMS = {
 
 
 def build_pattern(sections, start_token, end_token):
+    # sections may not be in the correct order: fix it
+    key_order = ['category', 'keywords', 'title', 'body']
+    sections = [section for section in key_order if section in sections]
+
     pattern_text = re.escape(start_token) + '(?:.*)'
 
     for section in sections:
