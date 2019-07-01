@@ -2,7 +2,7 @@
 
 ![](example/example_pic.png)
 
-A method for encoding a dataset of text documents into a form that when finetuned with GPT-2, the network will be able to generate text pertaining to the specified keywords (although the encoded text can theoetically work with any type of text-based neural network generation, it leverages GPT-2's long horizon and strong context abilities).
+A method for encoding a dataset of text documents into a form that when finetuned with [OpenAI](https://openai.com)'s [GPT-2](https://openai.com/blog/better-language-models/), the network will be able to generate text pertaining to the specified keywords (although the encoded text can theoetically work with any type of text-based neural network generation, it leverages GPT-2's long horizon and strong context abilities).
 
 You can demo the results w/ an example on how to use the script in the `example` folder. Additionally, you can play with keywords yourself with the [Reddit GPT-2 API](https://minimaxir.com/apps/gpt2-reddit/) ([GitHub](https://github.com/minimaxir/reddit-gpt-2-cloud-run)), or read [pregenerated examples](https://www.reddit.com/r/legaladviceofftopic/comments/bxi869/i_trained_an_ai_to_generate_the_ultimate/) of that keyword-based model on /r/legaladvice.
 
@@ -18,7 +18,7 @@ This repo contains a `keyword_encode.py` script which attempts to extract the ke
 	* Pronouns and stop words are excluded from keywords.
 	* Keywords are deduped.
 2. Prepare the keywords in such a way that the document text is generated conditionally on the keywords.
-	* Normalize the keywords (replace spaces/punctuation w/ dashes) and dedupe the keywords in a given document. The keywords are *not* case-normalized for best user experience when specifying keywords.
+	* Normalize the keywords (replace spaces/punctuation w/ dashes). The keywords are *not* case-normalized for best user experience when specifying keywords.
 	* Shuffle the order of the keywords to prevent GPT-2 from cheating and learning when the order of the keywords should be written in the document proper.
 	* For each set of processed keywords in a document, create `repeat` random combinations (default: 3) of the keywords. This serves as a data augmentation of sorts, and prevents the model from overfitting on a given set of keywords.
 	* For each combination above, select a random number of *up to* `max_keywords` (default: 3), which are then shuffled, to prevent the neural network from a) learning the number of keywords as a hint to the length of the text and b) the order of the keywords in the resulting text.
@@ -42,7 +42,7 @@ See the code for more information.
 
 ## Helpful Notes
 
-* There is no explicit mathematical/theoetical basis behind the keywords aside from the typical debiasing of the text; despite that, the results are good.
+* There is no explicit mathematical/theoetical basis behind the keywords aside from the typical debiasing of the text; despite that, the results are good, and there is still room for improvement!
 * The keywords will not be present in the resulting text 100% of the time, but the presence of keywords in the text is still high.
 * The scope of the text document(s) plus the keywords must be within GPT-2's max 1023 token scope (e.g. should only be a few paragraphs max).
 * Manual keywords may work better if you have them, which you can set with the `keywords_field` parameter to `encode_keywords()`.
