@@ -2,13 +2,13 @@
 
 ![](example/example_pic.png)
 
-A method for encoding a dataset of text documents into a form that when finetuned with GPT-2, the network will be able to generate text pertaining to the specified keywords (although the encoded text can theoetically work with any type of text-based network, it leverages GPT-2's long horizon and strong context abilities).
+A method for encoding a dataset of text documents into a form that when finetuned with GPT-2, the network will be able to generate text pertaining to the specified keywords (although the encoded text can theoetically work with any type of text-based neural network generation, it leverages GPT-2's long horizon and strong context abilities).
 
-You can demo the results w/ an example on how to use the script in the `examples` folder. Additionally, you can play with keywords yourself with the [Reddit GPT-2 API](https://minimaxir.com/apps/gpt2-reddit/), or read [pregenerated examples](https://www.reddit.com/r/legaladviceofftopic/comments/bxi869/i_trained_an_ai_to_generate_the_ultimate/) of that keyword-based model on /r/legaladvice.
+You can demo the results w/ an example on how to use the script in the `examples` folder. Additionally, you can play with keywords yourself with the [Reddit GPT-2 API](https://minimaxir.com/apps/gpt2-reddit/) ([GitHub](https://github.com/minimaxir/reddit-gpt-2-cloud-run)), or read [pregenerated examples](https://www.reddit.com/r/legaladviceofftopic/comments/bxi869/i_trained_an_ai_to_generate_the_ultimate/) of that keyword-based model on /r/legaladvice.
 
 The encoding is tokenized using [spaCy](https://spacy.io) for more robust keyword tokenization and parallelized using [ray](https://github.com/ray-project/ray) in order to massively speed up encoding on large datasets (about 11x speedup using 32 vCPUs/threads vs. single threaded, at 70% CPU utilization)
 
-## Simple Usage
+## Usage
 
 This repo contains a `keyword_encode.py` script which attempts to extract the keywords in an unsupervised manner (although you can provide your own keywords if you have them). The methodology is as follows for each text document:
 
@@ -26,7 +26,9 @@ This repo contains a `keyword_encode.py` script which attempts to extract the ke
 
 The default case (passing a CSV of `titles`) generates `keywords`, and outputs a `.txt` of keywords and titles.
 
-## Advanced Usage
+The `keyword_decode.py` script contains functions for decoding bulk-generated encoded texts (e.g. generated through gpt-2-simple, albeit the native truncation is recommended in that use case). `decode_texts()` will extract the text from each of the specified taxonomic sections for the provided list of texts, and `decode_file()` can extract and decode all texts and write to a file.
+
+## Taxonomy
 
 This script is also capable of handling additional hierarchal conditions. This script has 4 total possibilities implemented:
 `category`, `keywords`, `title`, and `body`.
@@ -34,6 +36,8 @@ This script is also capable of handling additional hierarchal conditions. This s
 `category` is the broadest scope of a given text. (e.g. the subreddit of a given post, the speaker of a given phrase if using for chatbots)
 
 `body` is used if there's a large amount of text dependant on `title` (e.g. a blog post).
+
+See the code for more information.
 
 ## Helpful Notes
 
