@@ -30,6 +30,8 @@ def decode_texts(texts, sections=['title'],
 
     assert len(group_indices) > 0
     pattern = build_pattern(sections, start_token, end_token)
+    if not isinstance(texts, (list,)):
+        texts = [texts]
     decoded_texts = []
     for text in texts:
         decoded_text = re.match(pattern, text)
@@ -37,6 +39,8 @@ def decode_texts(texts, sections=['title'],
             continue
         decoded_text_attrs = tuple(decoded_text.group(i)
                                    for i in group_indices)
+        if len(group_indices) == 1:
+            decoded_text_attrs = decoded_text_attrs[0]
         decoded_texts.append(decoded_text_attrs)
     return decoded_texts
 
