@@ -47,18 +47,19 @@ def decode_texts(texts, sections=['title'],
 
 def decode_file(file_path, out_file='texts_decoded.txt',
                 doc_delim='=' * 20 + '\n',
-                sections=['titles'],
+                sections=['title'],
                 start_token="<|startoftext|>",
                 end_token="<|endoftext|>"):
 
     assert len(sections) == 1, "This function only supports output of a single section for now."
-    doc_pattern = re.compile(
-        re.escape(start_token + '(.*)' + end_token), flags=re.MULTILINE)
+    doc_pattern = re.compile(re.escape(start_token) +
+                             '(.*)' + re.escape(end_token), flags=re.MULTILINE)
 
     with open(file_path, 'r', encoding='utf8', errors='ignore') as f:
         # warning: loads entire file into memory!
-        docs = re.match(doc_pattern(f.read()))
+        docs = re.findall(doc_pattern, f.read())
 
+    docs = [start_token + doc + end_token for doc in docs]
     decoded_docs = decode_texts(docs,
                                 sections=sections,
                                 start_token=start_token,
