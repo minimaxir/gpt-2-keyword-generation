@@ -21,34 +21,33 @@ def build_pattern(sections, start_token, end_token):
     return re.compile(pattern_text, flags=re.MULTILINE)
 
 
-def keyword_decode(texts, input_sections=['keywords', 'title'],
-                   output_sections=['title'],
-                   start_token="<|startoftext|>",
-                   end_token="<|endoftext|>"):
+def decode_texts(texts, sections=['title'],
+                 start_token="<|startoftext|>",
+                 end_token="<|endoftext|>"):
 
     # get the index of the group(s) we want to extract
-    group_indices = [i + 1 for i, section in enumerate(input_sections)
-                     if section in output_sections]
+    group_indices = [i + 1 for i, section in enumerate(sections)]
 
     assert len(group_indices) > 0
-    pattern = build_pattern(input_sections, start_token, end_token)
+    pattern = build_pattern(sections, start_token, end_token)
     decoded_texts = []
     for text in texts:
         decoded_text = re.match(pattern, text)
         if decoded_text is None:
             continue
-        decoded_text_attrs = (decoded_text.group(i) for i in group_indices)
+        decoded_text_attrs = tuple(decoded_text.group(i)
+                                   for i in group_indices)
         decoded_texts.append(decoded_text_attrs)
     return decoded_texts
 
 
-def keyword_decode_file(file_path, out_file='texts_decoded.txt',
-                        doc_delim='=' * 20 + '\n',
-                        input_sections=['keywords', 'titles'],
-                        output_sections=['titles'],
-                        start_token="<|startoftext|>",
-                        end_token="<|endoftext|>"):
+def decode_file(file_path, out_file='texts_decoded.txt',
+                doc_delim='=' * 20 + '\n',
+                sections=['titles'],
+                start_token="<|startoftext|>",
+                end_token="<|endoftext|>"):
 
+    assert len(sections) == 1, "This function only supports output of a single section for now."
     doc_pattern = re.compile(
         re.escape(start_token + '(.*)' + end_token), flags=re.MULTILINE)
 
@@ -56,10 +55,10 @@ def keyword_decode_file(file_path, out_file='texts_decoded.txt',
         # warning: loads entire file into memory!
         docs = re.match(doc_pattern(f.read()))
 
-    decoded_docs = keyword_decode(docs, input_sections=input_sections,
-                                  output_sections=output_sections,
-                                  start_token=start_token,
-                                  end_token=end_token)
+    decoded_docs = decode_texts(docs,
+                                sections=sections,
+                                start_token=start_token,
+                                end_token=end_token)
 
     with open(out_file, 'w', encoding='utf8', errors='ignore') as f:
         for doc in decoded_docs:
