@@ -39,7 +39,7 @@ gpt2.generate(sess,
               nsamples=100,
               batch_size=25,
               length=200,
-              prefix="<|startoftext|>~`legaladvice~^dog cat tree sue~@"
+              prefix="<|startoftext|>~`legaladvice~^dog cat tree sue~@",
               truncate="<|endoftext|>",
               include_prefix=False,
               sample_delim=''
