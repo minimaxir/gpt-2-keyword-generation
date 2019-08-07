@@ -5,7 +5,7 @@ Here is an example using Reddit data, utilizing the Top 10 most-upvoted posts fo
 First, install the dependencies + the pretrained spaCy model:
 
 ```shell
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 ```
 
 The input is the `title` of the Reddit post and the `subreddit` of the Reddit post as the category.
