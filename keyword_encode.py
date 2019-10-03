@@ -154,7 +154,7 @@ class Encoder(object):
                                 keywords_compounds) - self.PRONOUNS)  # dedupe
         else:
             keywords = [keyword.strip()
-                        for keyword in row[self.keyword_gen].split(self.keyword_sep)]
+                        for keyword in row[self.keywords_field].split(self.keyword_sep)]
             keywords = list(set(keywords))
 
         encoded_texts = []
