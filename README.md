@@ -2,7 +2,7 @@
 
 ![](example/example_pic.png)
 
-A method for encoding a dataset of text documents into a form that when finetuned with [OpenAI](https://openai.com)'s [GPT-2](https://openai.com/blog/better-language-models/), the network will be able to generate text pertaining to the specified keywords (although the encoded text can theoetically work with any type of text-based neural network generation, it leverages GPT-2's long horizon and strong context abilities).
+A method for encoding a dataset of text documents into a form that when finetuned with [OpenAI](https://openai.com)'s [GPT-2](https://openai.com/blog/better-language-models/), the network will be able to generate text pertaining to the specified keywords (although the encoded text can theoretically work with any type of text-based neural network generation, it leverages GPT-2's long horizon and strong context abilities).
 
 You can demo the results w/ an example on how to use the script in the `example` folder. Additionally, you can play with keywords yourself with the [Reddit GPT-2 API](https://minimaxir.com/apps/gpt2-reddit/) ([GitHub](https://github.com/minimaxir/reddit-gpt-2-cloud-run)), or read [pregenerated examples](https://www.reddit.com/r/legaladviceofftopic/comments/bxi869/i_trained_an_ai_to_generate_the_ultimate/) of that keyword-based model on /r/legaladvice.
 
